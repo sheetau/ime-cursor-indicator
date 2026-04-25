@@ -15,9 +15,8 @@ A lightweight utility that displays a small indicator near your cursor when IME 
 1. Run the executable: IMECursorIndicator.exe
 2. The app runs in the system tray.
 3. Right-click the tray icon to:
-
-- Change indicator color
-- Exit the application
+   - Change indicator color
+   - Exit the application
 
 ## Startup (Auto Launch)
 
