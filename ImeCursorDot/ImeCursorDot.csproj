@@ -11,6 +11,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	<ApplicationIcon>resources\favicon.ico</ApplicationIcon>
+	<AssemblyName>IMECursorIndicator</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
