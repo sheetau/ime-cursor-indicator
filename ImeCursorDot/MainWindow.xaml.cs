@@ -135,9 +135,14 @@ namespace ImeCursorDot
             Closing += (s, e) => Shutdown();
         }
 
+        private static readonly string _settingsPath = System.IO.Path.Combine(
+    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+    "ImeCursorDot", "settings.json"
+);
+
         private void AddColorItem(Forms.ContextMenuStrip ctx, string name, Media.Brush fill, Media.Brush stroke, bool isDefault)
         {
-            string saved = Properties.Settings.Default.DotColorName;
+            string saved = LoadColorName();
             bool check = saved == name || (saved == "" && isDefault);
 
             var item = new Forms.ToolStripMenuItem(name) { Checked = check };
@@ -151,20 +156,41 @@ namespace ImeCursorDot
             item.Click += (_, __) =>
             {
                 foreach (var obj in ctx.Items)
-                {
-                    if (obj is Forms.ToolStripMenuItem mi)
-                        mi.Checked = false;
-                }
+                    if (obj is Forms.ToolStripMenuItem mi) mi.Checked = false;
 
                 item.Checked = true;
                 _dotEllipse.Fill = fill;
                 _dotEllipse.Stroke = stroke;
-
-                Properties.Settings.Default.DotColorName = name;
-                Properties.Settings.Default.Save();
+                SaveColorName(name);
             };
 
             ctx.Items.Add(item);
+        }
+
+        private static string LoadColorName()
+        {
+            try
+            {
+                if (System.IO.File.Exists(_settingsPath))
+                {
+                    string json = System.IO.File.ReadAllText(_settingsPath);
+                    // {"color":"White"} の形式から値を取り出す
+                    var match = System.Text.RegularExpressions.Regex.Match(json, "\"color\"\\s*:\\s*\"([^\"]+)\"");
+                    if (match.Success) return match.Groups[1].Value;
+                }
+            }
+            catch { }
+            return "";
+        }
+
+        private static void SaveColorName(string name)
+        {
+            try
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(_settingsPath)!);
+                System.IO.File.WriteAllText(_settingsPath, $"{{\"color\":\"{name}\"}}");
+            }
+            catch { }
         }
 
         private void Shutdown()
